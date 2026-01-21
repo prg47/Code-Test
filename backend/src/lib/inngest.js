@@ -4,7 +4,7 @@ import User from "../models/User.model.js";
 
 export const inngest = new Inngest({id : "code-Test"});
 
-const deleteUserFromDBUser = inngest.createFunction(
+const deleteUserFromDB = inngest.createFunction(
     {id:"delete-user-from-db"},
     {event: "clerk/user.deleted"},
     async({event})=>{
@@ -33,4 +33,4 @@ const syncUser = inngest.createFunction(
     }
 )
 
-export const functions = {syncUser,deleteUserFromDB}
+export const functions = [syncUser,deleteUserFromDB]

@@ -14,12 +14,12 @@ const userSchema = new mongoose.Schema({
         default: ""
     },
     clerkId: {
-        type: true,
+        type: String,
         required: true,
         unique: true      //reference to clerk
     }
 },{timestamps: true});
 
-const User = mongoose.model("User",user)
+const User = mongoose.model("User",userSchema)
 
 export default User;
