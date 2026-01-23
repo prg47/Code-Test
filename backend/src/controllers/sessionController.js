@@ -87,7 +87,7 @@ export async function getSessionById(req,res){
         .populate("host","name email profileImage clerkId")
         .populate("participant","host email profileImage clerkId")
 
-        if(!session) res.status(404).json({msg: "session not found"});
+        if(!session) return res.status(404).json({msg: "session not found"});
 
         res.status(200).json({session});
         
@@ -103,7 +103,7 @@ export async function joinSession(req,res){
         const userId = req.user._id;
         const clerkId = req.user.clerkId;
 
-        const session = Session.findById(id);
+        const session = await Session.findById(id);
 
         if(!session) res.status(404).json({msg: "session not found"});
 
@@ -131,7 +131,7 @@ export async function endSession(req,res){
 
         const session = await Session.findById(id);
 
-        if(!session) return res.staus(404).json({msg : "session not found"});
+        if(!session) return res.status(404).json({msg : "session not found"});
 
         //check if user is host
         if(session.host.toString() !== userId.toString()){

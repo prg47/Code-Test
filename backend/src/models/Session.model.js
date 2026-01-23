@@ -28,7 +28,7 @@ const sessionSchema = new mongoose.Schema({
     //stream video call id
     callId : {
         type: String,
-        default: "true",
+        default: "",
 
     }
 },{timestamps: true});
