@@ -42,6 +42,7 @@ function SessionPage() {
     useEffect(() => {
             if (!session || !user || loadingSession) return;
             if (isHost || isParticipant) return;
+            if (joinSessionMutation.isPending) return
 
             joinSessionMutation.mutate(id, { onSuccess: refetch });
 
