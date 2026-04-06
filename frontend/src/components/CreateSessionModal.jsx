@@ -1,5 +1,5 @@
 import { Code2Icon, LoaderIcon, PlusIcon } from "lucide-react";
-import { PROBLEMS } from "../data/problems";
+import { useAllProblems } from "../hooks/useProblems.js";
 
 function CreateSessionModal({
   isOpen,
@@ -9,7 +9,7 @@ function CreateSessionModal({
   onCreateRoom,
   isCreating,
 }) {
-  const problems = Object.values(PROBLEMS);
+  const { data: problems = [], isLoading } = useAllProblems();
 
   if (!isOpen) return null;
 
@@ -26,27 +26,34 @@ function CreateSessionModal({
               <span className="label-text-alt text-error">*</span>
             </label>
 
-            <select
-              className="select w-full"
-              value={roomConfig.problem}
-              onChange={(e) => {
-                const selectedProblem = problems.find((p) => p.title === e.target.value);
-                setRoomConfig({
-                  difficulty: selectedProblem.difficulty,
-                  problem: e.target.value,
-                });
-              }}
-            >
-              <option value="" disabled>
-                Choose a coding problem...
-              </option>
-
-              {problems.map((problem) => (
-                <option key={problem.id} value={problem.title}>
-                  {problem.title} ({problem.difficulty})
+            {isLoading ? (
+              <div className="flex items-center gap-2 text-base-content/60">
+                <span className="loading loading-spinner loading-sm" />
+                <span>Loading problems...</span>
+              </div>
+            ) : (
+              <select
+                className="select w-full"
+                value={roomConfig.problem}
+                onChange={(e) => {
+                  const selectedProblem = problems.find((p) => p.title === e.target.value);
+                  setRoomConfig({
+                    difficulty: selectedProblem.difficulty,
+                    problem: e.target.value,
+                    problemId: selectedProblem.id, // send slug too
+                  });
+                }}
+              >
+                <option value="" disabled>
+                  Choose a coding problem...
                 </option>
-              ))}
-            </select>
+                {problems.map((problem) => (
+                  <option key={problem.id} value={problem.title}>
+                    {problem.title} ({problem.difficulty})
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           {/* ROOM SUMMARY */}
@@ -81,7 +88,6 @@ function CreateSessionModal({
             ) : (
               <PlusIcon className="size-5" />
             )}
-
             {isCreating ? "Creating..." : "Create"}
           </button>
         </div>
@@ -90,4 +96,5 @@ function CreateSessionModal({
     </div>
   );
 }
+
 export default CreateSessionModal;

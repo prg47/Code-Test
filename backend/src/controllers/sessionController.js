@@ -3,12 +3,12 @@ import { streamClient,chatClient } from "../lib/stream.js";
 
 export async function createSession(req,res){
     try {
-        const {problem, difficulty} = req.body;
+        const {problem, problemId, difficulty} = req.body;
         const userId = req.user._id;
         const clerkId = req.user.clerkId;
         
-        if(!problem || !difficulty){
-            return res.status(400).json({msg: "problem or difficulty missing"});
+        if(!problem || !problemId || !difficulty){
+            return res.status(400).json({msg: "problem, problemId or difficulty missing"});
         }
         
         //generate unique call id for stream-video
@@ -17,6 +17,7 @@ export async function createSession(req,res){
         //creating session in db
         const session = await Session.create({
             problem,
+            problemId,
             difficulty,
             host:userId,
             callId
@@ -40,10 +41,8 @@ export async function createSession(req,res){
         await channel.create();
         res.status(201).json({session});
 
-
-
     } catch (error) {
-        console.log("Error in creating Session");
+        console.log("Error in creating Session", error);
         res.status(500).json({msg:"Internal Server Error"});
     }
 }
@@ -151,7 +150,6 @@ export async function endSession(req,res){
         if(session.status === "completed"){
             return res.status(400).json({msg : "Session already completed"});
         }
-
 
         //delete video call and message
         const call = streamClient.video.call("default",session.callId);

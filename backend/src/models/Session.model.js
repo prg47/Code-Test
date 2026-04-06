@@ -5,6 +5,10 @@ const sessionSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
+     problemId: {
+        type: String, // slug e.g. "two-sum"
+        required: true,
+    },
     difficulty: {
         type: String,
         enum: ["easy","medium","hard"],

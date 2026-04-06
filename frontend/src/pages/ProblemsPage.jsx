@@ -1,16 +1,18 @@
 import { ChevronRightIcon, Code2Icon } from "lucide-react";
 import Navbar from "../components/Navbar"
-import { PROBLEMS } from "../data/problems";
 import { getDifficultyBadgeClass } from "../lib/utils.js";
 import { Link } from "react-router";
+import { useAllProblems } from "../hooks/useProblems.js";
 
 
 
 function ProblemsPage(){
-    const problems =  Object.values(PROBLEMS);
+    const { data: problems = [], isLoading, isError } = useAllProblems();
+
     const easyCount = problems.filter(p=>p.difficulty === "Easy").length
     const mediumCount = problems.filter(p=>p.difficulty === "Medium").length
     const hardCount = problems.filter(p=>p.difficulty === "Hard").length
+
     return(
         <div className="min-h-screen bg-base-200">
             <Navbar/>
@@ -22,19 +24,32 @@ function ProblemsPage(){
                     <p className="text-base-content/70">
                         Sharpen your coding skills with these problems
                     </p>
-
                 </div>
 
-                {/*problms list */}
-                <div className="space-y-4">
-                    {
-                        problems.map(problem=>(
+                {/* loading state */}
+                {isLoading && (
+                    <div className="flex justify-center py-20">
+                        <span className="loading loading-spinner loading-lg text-primary"/>
+                    </div>
+                )}
+
+                {/* error state */}
+                {isError && (
+                    <div className="alert alert-error">
+                        <span>Failed to load problems. Please try again.</span>
+                    </div>
+                )}
+
+                {/*problems list */}
+                {!isLoading && !isError && (
+                    <div className="space-y-4">
+                        {problems.map(problem=>(
                             <Link key={problem.id}
                             to={`/problem/${problem.id}`}
                             className="card bg-base-100 hover:scale-[1.01] transition-transform">
                                 <div className="card-body">
                                     <div className="flex items-center justify-between gap-4">
-                                        {/*jleft side  */}
+                                        {/*left side  */}
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="size-12 rounded-16 bg-primary/10 flex items-center
@@ -47,60 +62,47 @@ function ProblemsPage(){
                                                         <span className={`badge bg-${getDifficultyBadgeClass(problem.difficulty)}`}>
                                                             {problem.difficulty}
                                                         </span>
-
                                                     </div>
                                                     <p className="text-sm text-base-content/60">
                                                         {problem.category}
                                                     </p>
                                                 </div>
                                             </div>
-                                            <p className="text=base-content/80 mb-3">
-                                                {problem.description.text}
-                                            </p>
+                                            
                                         </div>
                                         {/*right side */}
                                         <div className="flex items-center gap-2 text-primary">
-                                            <span className="font-md">
-                                                Solve
-                                            </span>
+                                            <span className="font-md">Solve</span>
                                             <ChevronRightIcon className="size-5"/>
                                         </div>
                                     </div>
                                 </div>
                             </Link>
-                        ))
-                    }
-                </div>
+                        ))}
+                    </div>
+                )}
 
-                {/*stats button */}
+                {/*stats */}
                 <div className="mt-12 card bg-base-100 shadow-lg">
                     <div className="card-body">
                         <div className="stats stats-vertical lg:stats-horizontal">
                             <div className="stat">
                                 <div className="stat-title">Total Problems</div>
                                 <div className="stat-value text-primary">{problems.length}</div>
-
                             </div>
                             <div className="stat">
                                 <div className="stat-title">Easy</div>
                                 <div className="stat-value text-primary">{easyCount}</div>
-
                             </div>
                             <div className="stat">
                                 <div className="stat-title">Medium</div>
                                 <div className="stat-value text-primary">{mediumCount}</div>
-
                             </div>
                             <div className="stat">
                                 <div className="stat-title">Hard</div>
                                 <div className="stat-value text-primary">{hardCount}</div>
-
                             </div>
-                            
-
-
                         </div>
-
                     </div>
                 </div>
 
@@ -110,3 +112,6 @@ function ProblemsPage(){
 }
 
 export default ProblemsPage;
+
+
+
